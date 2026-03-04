@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -43,7 +44,9 @@ import com.example.skybaseatmos.ui.forecast.ForecastDetail
 import com.example.skybaseatmos.ui.favList.ScreenFav
 import com.example.skybaseatmos.ui.theme.SkyBaseAtmosTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.intellij.lang.annotations.JdkConstants
 import javax.inject.Inject
 
 data object LocalInfoScreen
@@ -122,26 +125,7 @@ fun UI(weatherCache: WeatherCache, localRepository: LocalRepository) {
                         }
                         
                         if (weatherData != null) {
-                            FloatingActionButton(
-                                onClick = {
-                                    scope.launch {
-                                        if (isFavorite) {
-                                            localRepository.remove(weatherData!!)
-                                        } else {
-                                            localRepository.save(weatherData!!)
-                                        }
-                                        isFavorite = !isFavorite
-                                    }
-                                },
-                                modifier = Modifier
-                                    .align(Alignment.BottomEnd)
-                                    .padding(bottom = 50.dp, end = 30.dp),
-                            ) {
-                                Icon(
-                                    imageVector = if (isFavorite) Icons.Default.Star else Icons.Default.StarBorder,
-                                    contentDescription = "Preferiti"
-                                )
-                            }
+                            isFavorite=FavButton(localRepository,isFavorite,scope,weatherData!!)
                         }
                     }
                 }
@@ -185,4 +169,30 @@ fun SkyBottom(backstack: SnapshotStateList<Any>){
             label = {Text("Map")}
         )
     }
+}
+@Composable
+
+fun BoxScope.FavButton(localRepository: LocalRepository, isFavorite: Boolean, scope: CoroutineScope, weatherData: Weather): Boolean{
+    var fav=isFavorite
+    FloatingActionButton(
+        onClick = {
+            scope.launch {
+                if (isFavorite) {
+                    localRepository.remove(weatherData)
+                } else {
+                    localRepository.save(weatherData)
+                }
+                fav = !fav
+            }
+        },
+        modifier = Modifier
+            .align(Alignment.BottomEnd)
+            .padding(bottom = 50.dp, end = 30.dp),
+    ) {
+        Icon(
+            imageVector = if (isFavorite) Icons.Default.Star else Icons.Default.StarBorder,
+            contentDescription = "Preferiti"
+        )
+    }
+    return fav
 }

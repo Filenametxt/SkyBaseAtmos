@@ -41,20 +41,20 @@ class ScreenFavViewModel @Inject constructor(
                 null
             }
 
-            if (weather != null) {
-                getWeathersUseCase(weather).collect { result ->
-                    uiState = when (result) {
-                        is Result.Loading -> uiState.copy(isLoading = true)
-                        is Result.Success -> uiState.copy(items = result.data, isLoading = false, error = null)
-                        is Result.Error -> uiState.copy(error = result.message, isLoading = false)
-                    }
+            getWeathersUseCase(weather).collect { result ->
+                uiState = when (result) {
+                    is Result.Loading -> uiState.copy(isLoading = true)
+                    is Result.Success -> uiState.copy(items = result.data, isLoading = false, error = null)
+                    is Result.Error -> uiState.copy(error = result.message, isLoading = false, items = emptyList())
                 }
+            }
+            /*if (weather != null) {
             } else {
                 uiState = uiState.copy(
-                    isLoading = false, 
+                    isLoading = false,
                     error = "Impossibile recuperare i dati meteo. Controlla la connessione."
                 )
-            }
+            }*/
         }
     }
 }
