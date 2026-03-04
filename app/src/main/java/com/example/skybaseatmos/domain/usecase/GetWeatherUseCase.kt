@@ -30,7 +30,7 @@ class GetWeathersUseCase @Inject constructor(
                 weatherCache.validCache()
             } catch (e: Exception) {
                 // Ignoriamo l'errore di rete qui per permettere la lettura dal DB
-                Log.e("GetWeathersUseCase","Errore di rete")
+                Log.e("GetWeathersUseCase","Impossibile recuperare i dati meteo. Controlla la connessione")
             }
         if(weather!=null) {
             if (localRepository.check(weather)) {

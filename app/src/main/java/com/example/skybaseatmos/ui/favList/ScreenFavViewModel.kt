@@ -48,13 +48,6 @@ class ScreenFavViewModel @Inject constructor(
                     is Result.Error -> uiState.copy(error = result.message, isLoading = false, items = emptyList())
                 }
             }
-            /*if (weather != null) {
-            } else {
-                uiState = uiState.copy(
-                    isLoading = false,
-                    error = "Impossibile recuperare i dati meteo. Controlla la connessione."
-                )
-            }*/
         }
     }
 }
