@@ -61,7 +61,7 @@ class WeatherCache @Inject constructor(
         }
     }
 
-    suspend fun getForecast(): Weather? {
+    suspend fun getWeatherUpdated(): Weather? {
         validCache()
         return forecast
     }

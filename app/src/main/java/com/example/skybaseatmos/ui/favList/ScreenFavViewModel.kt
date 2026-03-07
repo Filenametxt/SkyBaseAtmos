@@ -31,12 +31,17 @@ class ScreenFavViewModel @Inject constructor(
         load()
     }
 
+
+    fun refresh() {
+        load() // Riesegue il recupero dei dati
+    }
+
     private fun load() {
         viewModelScope.launch {
             uiState = uiState.copy(isLoading = true)
             
             val weather: Weather? = try {
-                weatherCache.getForecast()
+                weatherCache.getWeatherUpdated()
             } catch (e: Exception) {
                 null
             }
