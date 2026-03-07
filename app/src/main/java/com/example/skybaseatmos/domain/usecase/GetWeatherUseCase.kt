@@ -23,6 +23,9 @@ class GetWeathersUseCase @Inject constructor(
 {
     operator fun invoke(weather: Weather?): Flow<Result<List<Weather>>> = flow {
         emit(Result.Loading("Loading..."))
+        //Recupera la lista dei Weather salvati
+        val localData =  localRepository.getAll()
+        emit(Result.Success(localData))
 
         runCatching {
             // Aggiorna la cache (lancia eccezione se fallisce)
@@ -31,6 +34,7 @@ class GetWeathersUseCase @Inject constructor(
             } catch (e: Exception) {
                 // Ignoriamo l'errore di rete qui per permettere la lettura dal DB
                 Log.e("GetWeathersUseCase","Impossibile recuperare i dati meteo. Controlla la connessione")
+
             }
         if(weather!=null) {
             if (localRepository.check(weather)) {
@@ -38,7 +42,7 @@ class GetWeathersUseCase @Inject constructor(
                 localRepository.save(weather)
             }
         }
-            val localData = localRepository.getAll()
+
             emit(Result.Success(localData))
         }.onFailure {
             emit(Result.Error(it.message ?: "Unknown error"))

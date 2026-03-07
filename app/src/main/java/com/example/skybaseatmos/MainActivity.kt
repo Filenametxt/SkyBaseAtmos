@@ -23,15 +23,19 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import com.example.skybaseatmos.domain.model.Weather
 import com.example.skybaseatmos.ui.PermissionGate
 import com.example.skybaseatmos.ui.forecast.ForecastScreen
 import com.example.skybaseatmos.ui.favList.ScreenFav
+import com.example.skybaseatmos.ui.forecast.ForecastDetail
+import com.example.skybaseatmos.ui.map.ScreenMap
 import com.example.skybaseatmos.ui.theme.SkyBaseAtmosTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 data object LocalInfoScreen
 data object FavScreen
 data object MapScreen
+data class DetailScreen(val weather: Weather)
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -73,9 +77,16 @@ fun UI() {
                     ForecastScreen()
                 }
                 entry<FavScreen>{
-                    ScreenFav()
+                    ScreenFav(onItemClick = { weather ->
+                        backstack.add(DetailScreen(weather))
+                    })
                 }
-                entry<MapScreen> { }
+                entry<MapScreen> {
+                    ScreenMap()
+                }
+                entry<DetailScreen> { favChoise ->
+                    ForecastDetail(favChoise.weather)
+                }
             }
         )
     }
@@ -94,9 +105,9 @@ fun SkyBottom(backstack: SnapshotStateList<Any>){
             label = {Text("Info")}
         )
         NavigationBarItem(
-            selected = backstack.last() is FavScreen,
+            selected = backstack.last() is FavScreen || backstack.last() is DetailScreen,
             onClick = {
-                if (backstack.lastOrNull() !is FavScreen)
+                if (backstack.lastOrNull() !is FavScreen && backstack.lastOrNull() !is DetailScreen)
                     backstack.add(FavScreen)
             },
             icon ={ Icon(imageVector=Icons.Default.Star,contentDescription="Favourites")},

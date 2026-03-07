@@ -62,6 +62,8 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.room.ktx)
     implementation(libs.play.services.location)
+    implementation(libs.play.services.maps)
+    implementation(libs.maps.compose)
     ksp(libs.hilt.compiler)
     ksp(libs.androidx.room.compiler)
 

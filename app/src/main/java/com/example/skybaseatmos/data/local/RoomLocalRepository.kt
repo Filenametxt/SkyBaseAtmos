@@ -10,6 +10,7 @@ private fun Weather.toEntity()= WeatherEntity(
     lat=lat,
     lon=lon,
     temp=temp,
+    humidity=humidity,
     weather=weather,
     weatherID=weatherID
 )
@@ -20,6 +21,7 @@ private fun WeatherEntity.toDomain() = Weather(
     lat=lat,
     lon=lon,
     temp=temp,
+    humidity=humidity,
     weather=weather,
     weatherID=weatherID
 )

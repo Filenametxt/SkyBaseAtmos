@@ -1,5 +1,6 @@
 package com.example.skybaseatmos.ui.favList
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -26,13 +27,17 @@ import com.example.skybaseatmos.ui.forecast.weatherIcon
 @Composable
 fun ScreenFav(viewModel: ScreenFavViewModel = hiltViewModel(), onItemClick: (Weather) -> Unit = {}) {
     val uiState=viewModel.uiState
+    
     // Questo farà sì che i dati vengano ricaricati ogni volta che entri in questa schermata
     LaunchedEffect(Unit) {
         viewModel.refresh()
     }
     ListContent(
         items = uiState.items,
-        onItemClick = onItemClick
+        onItemClick = { weather ->
+            Log.d("ScreenFav", "Item cliccato: $weather")
+            onItemClick(weather)
+        }
     )
 }
 
@@ -52,19 +57,20 @@ fun ListContent(items: List<Weather>, onItemClick: (Weather) -> Unit = {}) {
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(items.size) { index ->
-                Item(
-                    icon = weatherIcon(items[index].weatherID),
-                    nameC = items[index].nomeC,
-                    temperature = items[index].temp,
-                    weather = items[index].weather
-                )
+                Item(items[index], onItemClick = { item -> onItemClick(item) })
             }
         }
     }
 }
 @Composable
-fun Item(icon: ImageVector, nameC: String, temperature: Double?,weather: String?){
+fun Item(weatherInfo: Weather, onItemClick: (Weather) -> Unit = {}){
+    val icon : ImageVector = weatherIcon(weatherInfo.weatherID)
+    val nameC: String = weatherInfo.nomeC
+    val temperature: Double? = weatherInfo.temp
+    val weather: String? = weatherInfo.weather
+
     ElevatedCard(
+        onClick = {onItemClick(weatherInfo)},
         modifier = Modifier
             .fillMaxWidth()
             .padding(18.dp),
