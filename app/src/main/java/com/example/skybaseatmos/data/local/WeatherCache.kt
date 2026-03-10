@@ -73,6 +73,13 @@ class WeatherCache @Inject constructor(
         return forecast
     }
 
+    suspend fun dbUpdate(lat: Double, lon: Double): Weather? {
+        return try{ remoteRepository.downloadData(lat,lon)}
+        catch (e: Exception){
+            null
+        }
+    }
+
     fun getCachedLatitude(): Double = latitude
     fun getCachedLongitude(): Double = longitude
 }

@@ -39,13 +39,26 @@ class GetWeathersUseCase @Inject constructor(
         if(weather!=null) {
             if (localRepository.check(weather)) {
                 localRepository.remove(weather)
+                updateDB(localData)
                 localRepository.save(weather)
+            }else{
+                updateDB(localData)
             }
         }
 
             emit(Result.Success(localData))
         }.onFailure {
-            emit(Result.Error(it.message ?: "Unknown error"))
+            emit(Result.Error(it.message ?: "Errore sconosciuto"))
+        }
+    }
+
+    suspend fun updateDB(localData: List<Weather>){
+        for(w in localData){
+            val weather: Weather? = weatherCache.dbUpdate(w.lat,w.lon)
+            if(weather!=null){
+                localRepository.remove(w)
+                localRepository.save(weather)
+            }
         }
     }
 
